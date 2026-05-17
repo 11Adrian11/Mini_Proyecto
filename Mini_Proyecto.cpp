@@ -2,8 +2,8 @@
 Bootcamp Programación Cero a POO
 Clase 11 - Mini-proyecto de C++
 Sistema: TecnoStock - Control de Inventario y Ventas
-Autor: Adria Mero Sobenis
-Fecha: 16/05/2026
+Autor: Adrian Mero Sobenis
+Fecha: 17/05/2026
 */
 
 #include <iostream>
@@ -14,6 +14,8 @@ const int MAX_PRODUCTOS = 5;
 void mostrarMenu();
 void inicializarInventario(string nombres[], double precios[], int stock[]);
 void registrarProductos(string nombres[], double precios[], int stock[]);
+void mostrarInventario(const string nombres[], const double precios[], const int stock[]);
+void calcularEstadisticas(const string nombres[], const double precios[], const int stock[]);
 
 int main() {
     string nombres[MAX_PRODUCTOS];
@@ -39,16 +41,16 @@ int main() {
             registrarProductos(nombres, precios, stock);
         } 
         else if (opcion == 2) {
-            cout << "\n[Proximamente] Reporte general de inventario..." << endl;
+            mostrarInventario(nombres, precios, stock); 
         } 
         else if (opcion == 3) {
-            cout << "\n[Proximamente] Estadisticas..." << endl;
+            calcularEstadisticas(nombres, precios, stock); 
         } 
         else if (opcion == 4) {
-            cout << "\n[Proximamente] Buscar producto..." << endl;
+            cout << "\n Buscar producto por nombre..." << endl;
         } 
         else if (opcion == 5) {
-            cout << "\n[Proximamente] Verificar alertas..." << endl;
+            cout << "\n Verificar alertas de stock..." << endl;
         } 
         else if (opcion == 6) {
             cout << "\nSaliendo del sistema..." << endl;
@@ -67,11 +69,11 @@ void mostrarMenu() {
     cout << "=========================================" << endl;
     cout << "     TECNOSTOCK - MENU DE GESTION        " << endl;
     cout << "=========================================" << endl;
-    cout << "1. Reiniciar/Registrar todos los productos" << endl;
+    cout << "1. Registrar todos los productos" << endl;
     cout << "2. Mostrar Reporte General de Inventario" << endl;
     cout << "3. Calcular Estadisticas (Totales, Max, Min)" << endl;
-    cout << "4. [MEJORA] Buscar Producto por Nombre" << endl;
-    cout << "5. [MEJORA] Alertas de Stock Critico" << endl;
+    cout << "4. Buscar Producto por Nombre" << endl;
+    cout << "5. Alertas de Stock Critico" << endl;
     cout << "6. Salir del Sistema" << endl;
     cout << "=========================================" << endl;
 }
@@ -88,7 +90,7 @@ void registrarProductos(string nombres[], double precios[], int stock[]) {
     cout << "\n--- REGISTRO COMPLETO DE PRODUCTOS ---\n";
     for (int i = 0; i < MAX_PRODUCTOS; i++) {
         cout << "\nProducto #" << i + 1 << endl;
-        cout << "Nombre (use guiones bajos para espacios): ";
+        cout << "Nombre: ";
         cin >> nombres[i];
 
         do {
@@ -102,4 +104,41 @@ void registrarProductos(string nombres[], double precios[], int stock[]) {
         } while (stock[i] < 0);
     }
     cout << "\n¡Inventario actualizado con exito!\n";
+}
+
+void mostrarInventario(const string nombres[], const double precios[], const int stock[]) {
+    cout << "\n-------------------------------------------------------------\n";
+    cout << "                REPORTE GENERAL DE INVENTARIO                \n";
+    cout << "-------------------------------------------------------------\n";
+    cout << "ID\tProducto\t\tPrecio\tStock\tTotal" << endl;
+    cout << "-------------------------------------------------------------\n";
+    
+    double valorTotalInventario = 0;
+    for (int i = 0; i < MAX_PRODUCTOS; i++) {
+        double valorFila = precios[i] * stock[i];
+        valorTotalInventario = valorTotalInventario + valorFila;
+        cout << (i + 1) << "\t" << nombres[i] << "\t\t" << "$" << precios[i] << "\t" << stock[i] << "\t" << "$" << valorFila << endl;
+    }
+    cout << "-------------------------------------------------------------\n";
+    cout << "Valor total acumulado en bodega: $" << valorTotalInventario << endl;
+}
+
+void calcularEstadisticas(const string nombres[], const double precios[], const int stock[]) {
+    cout << "\n--- ESTADISTICAS Y ANALISIS DE DATOS ---\n";
+    double sumaPrecios = 0;
+    int totalUnidades = 0;
+    int indiceMayor = 0;
+    int indiceMenor = 0;
+
+    for (int i = 0; i < MAX_PRODUCTOS; i++) {
+        sumaPrecios = sumaPrecios + precios[i];
+        totalUnidades = totalUnidades + stock[i];
+        if (precios[i] > precios[indiceMayor]) indiceMayor = i;
+        if (precios[i] < precios[indiceMenor]) indiceMenor = i;
+    }
+
+    cout << "* Promedio de precios en catalogo: $" << (sumaPrecios / MAX_PRODUCTOS) << endl;
+    cout << "* Unidades totales almacenadas: " << totalUnidades << " piezas.\n";
+    cout << "* Producto de mayor costo: " << nombres[indiceMayor] << " ($" << precios[indiceMayor] << ")\n";
+    cout << "* Producto de menor costo: " << nombres[indiceMenor] << " ($" << precios[indiceMenor] << ")\n";
 }
